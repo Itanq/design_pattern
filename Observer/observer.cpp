@@ -51,7 +51,6 @@ public:
         m_temperature = getTemperature();
         m_humidity = getHumidity();
         m_pressure = getPressure();
-        std::cout << " set: " << m_temperature << " " << m_humidity << " " << m_pressure << std::endl;
         for(auto& item : m_observerVec)
             item->update(m_temperature, m_humidity, m_pressure);
     }
@@ -68,7 +67,6 @@ public:
         m_humidity = rand() % 35;
         m_pressure = rand() % 100;
 
-        std::cout << " set: " << m_temperature << " " << m_humidity << " " << m_pressure << std::endl;
         measurementsChanged();
     }
 
@@ -104,9 +102,16 @@ public:
     }
 
     void update(int temprature, int humidity, int pressure) override {
+        // 数据是主题自动"推"给观察者的，但可能并不是所有的观察者都需要同样的数据。
         m_temperature = temprature;
         m_humidity = humidity;
         m_pressure = pressure;
+
+        // 如下，同样可以通过在主题中提供getter方法，使观察者自己根据自己的需要从主题那里"拉"数据。
+        SubJect* ps = m_subject.get();
+        WeatherData* pwd = dynamic_cast<WeatherData*>(m_subject.get());
+        std::cout << " PULL : " << pwd->getTemperature() << " : " << pwd->getHumidity() << " : " << pwd->getPressure() << std::endl;
+
         display();
     }
 
