@@ -55,6 +55,7 @@ public:
         // 双重锁定确保线程安全和性能
         if(m_pInstance == nullptr) {
             std::lock_guard<std::mutex> lock(m_mutex);
+            // 再次判断是否为空，因为此处有两个线程到达。
             if(m_pInstance == nullptr) {
                 m_pInstance = new Single2();
             }
